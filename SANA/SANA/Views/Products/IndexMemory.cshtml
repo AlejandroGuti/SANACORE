@@ -1,0 +1,53 @@
+﻿@model IEnumerable<SANA.Entities.Products>
+
+@{
+    ViewData["Title"] = "IndexCache";
+}
+
+<!--<h1> @SANA.Helpers.MemoryCache.Instance.CurrentProduct.Description</h1>-->
+<h2>Product in memory</h2>
+
+<p>
+    <a class="btn btn-primary" href="~/Products/Create/">New Product </a>
+</p>
+<!--<p>
+
+    <a asp-action="Create">Create New</a>
+</p>-->
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdProduct)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>
+                @SANA.Helpers.MemoryCache.Instance.CurrentProduct.IdProduct
+            </td>
+            <td>
+                @SANA.Helpers.MemoryCache.Instance.CurrentProduct.Title
+            </td>
+            <td>
+                @SANA.Helpers.MemoryCache.Instance.CurrentProduct.Description
+            </td>
+            <td>
+                @SANA.Helpers.MemoryCache.Instance.CurrentProduct.Price
+            </td>
+        </tr>
+
+    </tbody>
+</table>

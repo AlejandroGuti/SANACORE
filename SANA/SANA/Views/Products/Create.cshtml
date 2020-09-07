@@ -1,0 +1,162 @@
+﻿@model SANA.Entities.Products
+
+@{
+    ViewData["Title"] = "Create";
+}
+    <link href="~/css/selectMultiple.css" rel="stylesheet" />
+<h2>Create Products</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="IdProduct" class="control-label"></label>
+                <input asp-for="IdProduct" class="form-control" />
+                <span asp-validation-for="IdProduct" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SaveAs" class="control-label">Type 1 for save in memory, 2 for DataBase</label>
+                <input asp-for="SaveAs" class="form-control" />
+                <span asp-validation-for="SaveAs" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <select asp-items="Model.ProductCategoriesPicker"
+                        asp-for="ProductCategories"
+                        class="form-control"
+                        multiple data-placeholder="Add categories">
+                </select>
+                <span asp-validation-for="ProductCategories" class="text-danger"></span>
+            </div>
+            <br />
+
+
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-primary" href="~/Products/Index">Back to list </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>$(document).ready(function () {
+
+        var select = $('select[multiple]');
+        var options = select.find('option');
+
+        var div = $('<div />').addClass('selectMultiple');
+        var active = $('<div />');
+        var list = $('<ul />');
+        var placeholder = select.data('placeholder');
+
+        var span = $('<span />').text(placeholder).appendTo(active);
+
+        options.each(function () {
+            var text = $(this).text();
+            if ($(this).is(':selected')) {
+                active.append($('<a />').html('<em>' + text + '</em><i></i>'));
+                span.addClass('hide');
+            } else {
+                list.append($('<li />').html(text));
+            }
+        });
+
+        active.append($('<div />').addClass('arrow'));
+        div.append(active).append(list);
+
+        select.wrap(div);
+
+        $(document).on('click', '.selectMultiple ul li', function (e) {
+            var select = $(this).parent().parent();
+            var li = $(this);
+            if (!select.hasClass('clicked')) {
+                select.addClass('clicked');
+                li.prev().addClass('beforeRemove');
+                li.next().addClass('afterRemove');
+                li.addClass('remove');
+                var a = $('<a />').addClass('notShown').html('<em>' + li.text() + '</em><i></i>').hide().appendTo(select.children('div'));
+                a.slideDown(400, function () {
+                    setTimeout(function () {
+                        a.addClass('shown');
+                        select.children('div').children('span').addClass('hide');
+                        select.find('option:contains(' + li.text() + ')').prop('selected', true);
+                    }, 500);
+                });
+                setTimeout(function () {
+                    if (li.prev().is(':last-child')) {
+                        li.prev().removeClass('beforeRemove');
+                    }
+                    if (li.next().is(':first-child')) {
+                        li.next().removeClass('afterRemove');
+                    }
+                    setTimeout(function () {
+                        li.prev().removeClass('beforeRemove');
+                        li.next().removeClass('afterRemove');
+                    }, 200);
+
+                    li.slideUp(400, function () {
+                        li.remove();
+                        select.removeClass('clicked');
+                    });
+                }, 600);
+            }
+        });
+
+        $(document).on('click', '.selectMultiple > div a', function (e) {
+            var select = $(this).parent().parent();
+            var self = $(this);
+            self.removeClass().addClass('remove');
+            select.addClass('open');
+            setTimeout(function () {
+                self.addClass('disappear');
+                setTimeout(function () {
+                    self.animate({
+                        width: 0,
+                        height: 0,
+                        padding: 0,
+                        margin: 0
+                    }, 300, function () {
+                        var li = $('<li />').text(self.children('em').text()).addClass('notShown').appendTo(select.find('ul'));
+                        li.slideDown(400, function () {
+                            li.addClass('show');
+                            setTimeout(function () {
+                                select.find('option:contains(' + self.children('em').text() + ')').prop('selected', false);
+                                if (!select.find('option:selected').length) {
+                                    select.children('div').children('span').removeClass('hide');
+                                }
+                                li.removeClass();
+                            }, 400);
+                        });
+                        self.remove();
+                    })
+                }, 300);
+            }, 400);
+        });
+
+        $(document).on('click', '.selectMultiple > div .arrow, .selectMultiple > div span', function (e) {
+            $(this).parent().parent().toggleClass('open');
+        });
+
+    });</script>
+
